@@ -20,45 +20,57 @@ jobs:
     steps:
     # Checks-out your repository under $GITHUB_WORKSPACE, so your job can access it
     - uses: actions/checkout@v2
-    - name: Configure AWS Credentials Action For GitHub Actions
-      uses: aws-actions/configure-aws-credentials@v1
-      env:
-        AWS_ACCESS_KEY_ID: ${{secrets.AWS_ACCESS_KEY_ID}}
-        AWS_SECRET_ACCESS_KEY: ${{secrets.AWS_SECRET_ACCESS_KEY}}
-        AWS_REGION: "us-east-1"
-      with:
-#         # AWS Access Key ID. This input is required if running in the GitHub hosted environment. It is optional if running in a self-hosted environment that already has AWS credentials, for example on an EC2 instance.
-        aws-access-key-id: "$AWS_ACCESS_KEY_ID"
-#         # AWS Secret Access Key. This input is required if running in the GitHub hosted environment. It is optional if running in a self-hosted environment that already has AWS credentials, for example on an EC2 instance.
-        aws-secret-access-key: "$AWS_SECRET_ACCESS_KEY"
-#         # AWS Session Token
-#         aws-session-token: # optional
-#         # AWS Region, e.g. us-east-2
-        aws-region: us-east-1
-#         # Whether to set the AWS account ID for these credentials as a secret value, so that it is masked in logs. Valid values are 'true' and 'false'. Defaults to true
-        mask-aws-account-id: true
-#         # Use the provided credentials to assume an IAM role and configure the Actions environment with the assumed role credentials rather than with the provided credentials
-#         role-to-assume: # optional
-#         # Role duration in seconds (default: 6 hours)
-#         role-duration-seconds: # optional
-#         # Role session name (default: GitHubActions)
-#         role-session-name: # optional
-#         # The external ID of the role to assume
-#         role-external-id: # optional
-#         # Skip session tagging during role assumption
-#         role-skip-session-tagging: # optional
+#     - name: Configure AWS Credentials Action For GitHub Actions
+#       uses: aws-actions/configure-aws-credentials@v1
+#       env:
+#         AWS_ACCESS_KEY_ID: ${{secrets.AWS_ACCESS_KEY_ID}}
+#         AWS_SECRET_ACCESS_KEY: ${{secrets.AWS_SECRET_ACCESS_KEY}}
+#         AWS_REGION: "us-east-1"
+#       with:
+# #         # AWS Access Key ID. This input is required if running in the GitHub hosted environment. It is optional if running in a self-hosted environment that already has AWS credentials, for example on an EC2 instance.
+#         aws-access-key-id: "$AWS_ACCESS_KEY_ID"
+# #         # AWS Secret Access Key. This input is required if running in the GitHub hosted environment. It is optional if running in a self-hosted environment that already has AWS credentials, for example on an EC2 instance.
+#         aws-secret-access-key: "$AWS_SECRET_ACCESS_KEY"
+# #         # AWS Session Token
+# #         aws-session-token: # optional
+# #         # AWS Region, e.g. us-east-2
+#         aws-region: us-east-1
+# #         # Whether to set the AWS account ID for these credentials as a secret value, so that it is masked in logs. Valid values are 'true' and 'false'. Defaults to true
+#         mask-aws-account-id: true
+# #         # Use the provided credentials to assume an IAM role and configure the Actions environment with the assumed role credentials rather than with the provided credentials
+# #         role-to-assume: # optional
+# #         # Role duration in seconds (default: 6 hours)
+# #         role-duration-seconds: # optional
+# #         # Role session name (default: GitHubActions)
+# #         role-session-name: # optional
+# #         # The external ID of the role to assume
+# #         role-external-id: # optional
+# #         # Skip session tagging during role assumption
+# #         role-skip-session-tagging: # optional
+    - name: Unit Test
+      run: |
+        mkdir -p ~/.aws
+        touch ~/.aws/credentials
 
+        echo "[default]
+        aws_access_key_id = ${{ secrets.AWS_ACCESS_KEY_ID }}
+        aws_secret_access_key = ${{ secrets.AWS_SECRET_KEY_ID }}
+        region = ${AWS_DEFAULT_REGION}
+
+        [github]
+        role_arn = arn:aws:iam::{accountID}:role/{role}
+        source_profile = default" > ~/.aws/credentials
     - name: S3 Deploy
       uses: Reggionick/s3-deploy@v2.0.0
-#       with:
-#         # Directory to deploy
-#         folder: 
-#         # Name of AWS Bucket
-#         bucket: 
-#         # AWS CloudFront distribution ID
-#         dist-id: 
-#         # AWS CloudFront invalidation path(s)
-#         invalidation: 
+      with:
+        # Directory to deploy
+        folder: testtest/
+        # Name of AWS Bucket
+        bucket: testp2staticpage
+        # AWS CloudFront distribution ID
+        dist-id: testp2staticpage
+        # AWS CloudFront invalidation path(s)
+        invalidation: .
 
 
 #     # Runs a single command using the runners shell
