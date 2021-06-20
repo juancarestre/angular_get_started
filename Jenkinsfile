@@ -1,0 +1,5 @@
+buildRepo([
+  "npm": [
+    "cypress": false
+  ]
+])
